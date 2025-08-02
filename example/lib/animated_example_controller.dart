@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:render/render.dart';
@@ -44,14 +43,10 @@ class ExampleAnimationController extends ChangeNotifier {
     );
     await videoController.initialize();
 
-    final animationController = AnimationController(
-        vsync: vsync,
-        duration:
-            videoController?.value.duration ?? const Duration(seconds: 4));
-    final colorAnimation = ColorTween(begin: Colors.blue, end: Colors.yellow)
-        .animate(animationController);
-    final positionAnimation =
-        IntTween(begin: 0, end: 50).animate(animationController);
+    final animationController =
+        AnimationController(vsync: vsync, duration: videoController.value.duration ?? const Duration(seconds: 4));
+    final colorAnimation = ColorTween(begin: Colors.blue, end: Colors.yellow).animate(animationController);
+    final positionAnimation = IntTween(begin: 0, end: 50).animate(animationController);
     return ExampleAnimationController(
       vsync: vsync,
       positionAnimation: positionAnimation,

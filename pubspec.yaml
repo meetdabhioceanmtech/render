@@ -8,14 +8,14 @@ environment:
   flutter: ">=3.7.0-1.4.pre"
 
 dependencies:
-  # ffmpeg_kit_flutter_new_full: ^5.1.0
+  # ffmpeg_kit_flutter_https_gpl: ^5.1.0
   ffmpeg_kit_flutter_new_full: ^1.0.0
   provider: ^6.0.5
   flutter:
     sdk: flutter
   path_provider: ^2.0.15
   rich_console: ^1.0.4
-  uuid: ^3.0.7
+  uuid: ^4.1.0
 
 dev_dependencies:
   flutter_test:

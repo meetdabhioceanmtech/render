@@ -32,14 +32,11 @@ class RenderController {
   final List<RenderSession> _activeSessions = [];
 
   /// The controller to initiate a render process. See doc for more info.
-  RenderController({this.logLevel = LogLevel.debug})
-      : id = UuidValue(const Uuid().v4());
+  RenderController({this.logLevel = LogLevel.debug}) : id = UuidValue(const Uuid().v4());
 
   /// Creating a `RenderSession` from a `DetachedRenderSession`
-  RenderSession<T, K> _createRenderSessionFrom<T extends RenderFormat,
-          K extends RenderSettings>(
-      DetachedRenderSession<T, K> detachedRenderSession,
-      StreamController<RenderNotifier> notifier,
+  RenderSession<T, K> _createRenderSessionFrom<T extends RenderFormat, K extends RenderSettings>(
+      DetachedRenderSession<T, K> detachedRenderSession, StreamController<RenderNotifier> notifier,
       [WidgetIdentifier? overwriteTask]) {
     assert(!kIsWeb, "Render does not support Web yet");
     assert(
@@ -50,8 +47,7 @@ class RenderController {
         detachedSession: detachedRenderSession,
         notifier: notifier,
         task: overwriteTask ?? _globalTask!,
-        onDispose: () => _activeSessions.removeWhere(
-            (s) => s.sessionId == detachedRenderSession.sessionId));
+        onDispose: () => _activeSessions.removeWhere((s) => s.sessionId == detachedRenderSession.sessionId));
     _activeSessions.add(session);
     return session;
   }
@@ -62,8 +58,7 @@ class RenderController {
       bool started = true;
       stream.listen((event) {
         if (started) {
-          printRich("[Render plugin] $startMessage",
-              foreground: Colors.lightGreen, bold: true, underline: true);
+          printRich("[Render plugin] $startMessage", foreground: Colors.lightGreen, bold: true, underline: true);
           started = false;
         }
         printRich(event.toString(),
@@ -98,8 +93,7 @@ class RenderController {
       format: format,
     );
     _debugPrintOnStream(stream, "Capturing image started");
-    final out = await stream
-        .firstWhere((event) => event.isResult || event.isFatalError);
+    final out = await stream.firstWhere((event) => event.isResult || event.isFatalError);
     if (out.isFatalError) throw (out as RenderError).exception;
     return out as RenderResult;
   }
@@ -129,8 +123,7 @@ class RenderController {
       format: format,
     );
     _debugPrintOnStream(stream, "Capturing image from widget started");
-    final out = await stream
-        .firstWhere((event) => event.isResult || event.isFatalError);
+    final out = await stream.firstWhere((event) => event.isResult || event.isFatalError);
     if (out.isFatalError) throw (out as RenderError).exception;
     return out as RenderResult;
   }
@@ -158,8 +151,7 @@ class RenderController {
       format: format,
     );
     _debugPrintOnStream(stream, "Capturing motion started");
-    final out = await stream
-        .firstWhere((event) => event.isResult || event.isFatalError);
+    final out = await stream.firstWhere((event) => event.isResult || event.isFatalError);
     if (out.isFatalError) throw (out as RenderError).exception;
     return out as RenderResult;
   }
@@ -195,8 +187,7 @@ class RenderController {
       format: format,
     );
     _debugPrintOnStream(stream, "Capturing motion from widget started");
-    final out = await stream
-        .firstWhere((event) => event.isResult || event.isFatalError);
+    final out = await stream.firstWhere((event) => event.isResult || event.isFatalError);
     if (out.isFatalError) throw (out as RenderError).exception;
     return out as RenderResult;
   }
@@ -216,8 +207,7 @@ class RenderController {
     bool logInConsole = false,
   }) {
     final notifier = StreamController<RenderNotifier>.broadcast();
-    DetachedRenderSession.create(format, settings, logLevel ?? this.logLevel)
-        .then((detachedSession) async {
+    DetachedRenderSession.create(format, settings, logLevel ?? this.logLevel).then((detachedSession) async {
       final session = _createRenderSessionFrom(detachedSession, notifier);
       final capturer = RenderCapturer(session);
       final realSession = await capturer.single();
@@ -247,8 +237,7 @@ class RenderController {
     bool logInConsole = false,
   }) {
     final notifier = StreamController<RenderNotifier>.broadcast();
-    DetachedRenderSession.create(format, settings, logLevel ?? this.logLevel)
-        .then((detachedSession) async {
+    DetachedRenderSession.create(format, settings, logLevel ?? this.logLevel).then((detachedSession) async {
       final session = _createRenderSessionFrom(detachedSession, notifier);
       final capturer = RenderCapturer(session);
       final realSession = await capturer.run(duration);
@@ -283,8 +272,7 @@ class RenderController {
   }) {
     final widgetTask = WidgetIdentifier(controllerId: id, widget: widget);
     final notifier = StreamController<RenderNotifier>.broadcast();
-    DetachedRenderSession.create(format, settings, logLevel ?? this.logLevel)
-        .then((detachedSession) async {
+    DetachedRenderSession.create(format, settings, logLevel ?? this.logLevel).then((detachedSession) async {
       final session = _createRenderSessionFrom(
         detachedSession,
         notifier,
@@ -329,8 +317,7 @@ class RenderController {
   }) {
     final widgetTask = WidgetIdentifier(controllerId: id, widget: widget);
     final notifier = StreamController<RenderNotifier>.broadcast();
-    DetachedRenderSession.create(format, settings, logLevel ?? this.logLevel)
-        .then((detachedSession) async {
+    DetachedRenderSession.create(format, settings, logLevel ?? this.logLevel).then((detachedSession) async {
       final session = _createRenderSessionFrom(
         detachedSession,
         notifier,
@@ -431,8 +418,7 @@ class MotionRecorder<T extends MotionFormat> {
     BuildContext? context,
   }) : _controller = controller {
     _notifier = StreamController<RenderNotifier>.broadcast();
-    DetachedRenderSession.create(format, capturingSettings, logLevel)
-        .then((detachedSession) {
+    DetachedRenderSession.create(format, capturingSettings, logLevel).then((detachedSession) {
       _session = _controller._createRenderSessionFrom(
         detachedSession,
         _notifier,
@@ -442,8 +428,7 @@ class MotionRecorder<T extends MotionFormat> {
       _capturer.start();
     });
     if (logInConsole) {
-      _controller._debugPrintOnStream(
-          _notifier.stream, "Recording motion started");
+      _controller._debugPrintOnStream(_notifier.stream, "Recording motion started");
     }
   }
 
@@ -457,8 +442,7 @@ class MotionRecorder<T extends MotionFormat> {
     final realSession = await _capturer.finish();
     final processor = MotionProcessor(realSession);
     processor.process(); // wait for result instead of process
-    final out = await stream
-        .firstWhere((event) => event.isResult || event.isFatalError);
+    final out = await stream.firstWhere((event) => event.isResult || event.isFatalError);
     if (out.isFatalError) throw (out as RenderError).exception;
     _notifier.close();
     await _session.dispose();
