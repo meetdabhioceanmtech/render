@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:ffmpeg_kit_flutter_min_gpl/ffmpeg_kit.dart';
+import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:render/src/service/notifier.dart';
@@ -65,8 +65,9 @@ class RenderCapturer<K extends RenderFormat> {
       await Future.wait(_handlers);
       return _handlers.length < _unhandledCaptures.length;
     });
-    final capturingDuration =
-        Duration(milliseconds: DateTime.now().millisecondsSinceEpoch - startTime!.millisecondsSinceEpoch);
+    final capturingDuration = Duration(
+      milliseconds: DateTime.now().millisecondsSinceEpoch - startTime!.millisecondsSinceEpoch,
+    );
     return session.upgrade(capturingDuration, 1);
   }
 
@@ -77,11 +78,7 @@ class RenderCapturer<K extends RenderFormat> {
     startTime = DateTime.now();
     session.binding.addPostFrameCallback((binderTimeStamp) {
       startingDuration = session.binding.currentFrameTimeStamp;
-      _postFrameCallback(
-        binderTimeStamp: binderTimeStamp,
-        frame: 0,
-        duration: duration,
-      );
+      _postFrameCallback(binderTimeStamp: binderTimeStamp, frame: 0, duration: duration);
     });
   }
 
@@ -89,8 +86,8 @@ class RenderCapturer<K extends RenderFormat> {
   Future<RenderSession<K, RealRenderSettings>> finish() async {
     assert(_rendering, "Cannot finish capturing as, no active capturing.");
     final capturingDuration = Duration(
-        milliseconds:
-            DateTime.now().millisecondsSinceEpoch - startTime!.millisecondsSinceEpoch); // log end of capturing
+      milliseconds: DateTime.now().millisecondsSinceEpoch - startTime!.millisecondsSinceEpoch,
+    ); // log end of capturing
     _rendering = false;
     startingDuration = null;
     // * wait for handlers
@@ -107,11 +104,7 @@ class RenderCapturer<K extends RenderFormat> {
   }
 
   /// A callback function that is called after each frame is rendered.
-  void _postFrameCallback({
-    required Duration binderTimeStamp,
-    required int frame,
-    Duration? duration,
-  }) async {
+  void _postFrameCallback({required Duration binderTimeStamp, required int frame, Duration? duration}) async {
     if (!_rendering) return;
     final targetFrameRate = session.settings.asMotion?.frameRate ?? 1;
     final relativeTimeStamp = binderTimeStamp - (startingDuration ?? Duration.zero);
@@ -119,11 +112,7 @@ class RenderCapturer<K extends RenderFormat> {
     if (nextMilliSecond > relativeTimeStamp.inMilliseconds) {
       // add a new PostFrameCallback to know about the next frame
       session.binding.addPostFrameCallback(
-        (binderTimeStamp) => _postFrameCallback(
-          binderTimeStamp: binderTimeStamp,
-          frame: frame,
-          duration: duration,
-        ),
+        (binderTimeStamp) => _postFrameCallback(binderTimeStamp: binderTimeStamp, frame: frame, duration: duration),
       );
       // but we do nothing, because we skip this frame
       return;
@@ -136,19 +125,12 @@ class RenderCapturer<K extends RenderFormat> {
       if (exception.fatal) return;
     }
     session.binding.addPostFrameCallback(
-      (binderTimeStamp) => _postFrameCallback(
-        binderTimeStamp: binderTimeStamp,
-        frame: frame + 1,
-        duration: duration,
-      ),
+      (binderTimeStamp) => _postFrameCallback(binderTimeStamp: binderTimeStamp, frame: frame + 1, duration: duration),
     );
   }
 
   /// Converting the raw image data to a png file and writing the capture.
-  Future<void> _handleCapture(
-    int captureNumber, [
-    int? totalFrameTarget,
-  ]) async {
+  Future<void> _handleCapture(int captureNumber, [int? totalFrameTarget]) async {
     _activeHandlers++;
     try {
       final ui.Image capture = _unhandledCaptures.elementAt(captureNumber);
@@ -184,12 +166,7 @@ class RenderCapturer<K extends RenderFormat> {
         _recordActivity(RenderState.handleCaptures, captureNumber, totalFrameTarget, "Handled frame $captureNumber");
       }
     } catch (e) {
-      session.recordError(
-        RenderException(
-          "Handling frame $captureNumber unsuccessful.",
-          details: e,
-        ),
-      );
+      session.recordError(RenderException("Handling frame $captureNumber unsuccessful.", details: e));
     }
     _activeHandlers--;
     _triggerHandler(totalFrameTarget);
@@ -224,7 +201,8 @@ class RenderCapturer<K extends RenderFormat> {
       throw const RenderException(
         "Invalid frame sizes. "
         "All Render frames must have a fixed size during capturing",
-        details: "The render widget might be wrapped by an expandable widget that "
+        details:
+            "The render widget might be wrapped by an expandable widget that "
             "changes size during capturing.",
         fatal: true,
       );
@@ -247,10 +225,7 @@ class RenderCapturer<K extends RenderFormat> {
       }
       return renderObject.toImageSync(pixelRatio: session.settings.pixelRatio);
     } catch (e) {
-      throw RenderException(
-        "Unknown error while capturing frame context. Trying next frame.",
-        details: e,
-      );
+      throw RenderException("Unknown error while capturing frame context. Trying next frame.", details: e);
     }
   }
 
@@ -284,16 +259,10 @@ class RenderCapturer<K extends RenderFormat> {
       renderView.prepareInitialFrame();
 
       final RenderObjectToWidgetElement<RenderBox> rootElement = RenderObjectToWidgetAdapter<RenderBox>(
-          container: repaintBoundary,
-          child: Directionality(
-            textDirection: TextDirection.ltr,
-            child: widget,
-          )).attachToRenderTree(
-        buildOwner,
-      );
-      buildOwner.buildScope(
-        rootElement,
-      );
+        container: repaintBoundary,
+        child: Directionality(textDirection: TextDirection.ltr, child: widget),
+      ).attachToRenderTree(buildOwner);
+      buildOwner.buildScope(rootElement);
       buildOwner.finalizeTree();
 
       pipelineOwner.flushLayout();
@@ -311,10 +280,7 @@ class RenderCapturer<K extends RenderFormat> {
 
       return repaintBoundary.toImageSync(pixelRatio: session.settings.pixelRatio);
     } catch (e) {
-      throw RenderException(
-        "Unknown error while capturing frame context. Trying next frame.",
-        details: e,
-      );
+      throw RenderException("Unknown error while capturing frame context. Trying next frame.", details: e);
     }
   }
 

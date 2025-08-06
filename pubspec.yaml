@@ -10,10 +10,11 @@ environment:
 dependencies:
   # ffmpeg_kit_flutter_https_gpl: ^5.1.0
   # ffmpeg_kit_flutter_new_full: ^1.0.0
-  ffmpeg_kit_flutter_min_gpl:
-    git:
-      url: https://github.com/meetdabhioceanmtech/ffmpeg_kit_flutter_min_gpl.git
-      ref: 7abda8ea564187151a2e7584b5a97d7e2ec9833f
+  # ffmpeg_kit_flutter_new:
+  #   git:
+  #     url: https://github.com/meetdabhioceanmtech/ffmpeg_kit_flutter_new.git
+  #     ref: 7abda8ea564187151a2e7584b5a97d7e2ec9833f
+  ffmpeg_kit_flutter_new: ^3.1.0
   provider: ^6.0.5
   flutter:
     sdk: flutter
